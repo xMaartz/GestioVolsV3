@@ -162,7 +162,7 @@ public class Avio implements Component{
             }
 
             if (capacitatClasses + classe.getCapacitat() <= capacitat) {
-                classes.set(classes.size(), classe);
+                classes.add(classe);
             }
 
         } else if (seleccionarClasse(classe.getNom()) != -1 || capacitatClasses + classe.getCapacitat() > capacitat) {
