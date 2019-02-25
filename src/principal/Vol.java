@@ -278,6 +278,9 @@ public class Vol implements Component {
             }
         }
         
+        keyTripulants = tripulants.keySet();
+        iteratorTripulants = keyTripulants.iterator();
+        
         System.out.println("\nLa tripulació de cabina de passatgers és:");
         while(iteratorTripulants.hasNext()){
             Tripulant tripulantActual=iteratorTripulants.next();

@@ -55,6 +55,12 @@ public class GestorXML implements ProveedorPersistencia {
      */
     private void construirModel(Companyia pCompanyia){
         
+        Element arrel = new Element("companyia");
+        arrel.addAttribute(new Attribute("codi", Integer.toString(pCompanyia.getCodi())));
+        arrel.addAttribute(new Attribute("nom", pCompanyia.getNom()));
+        
+        Element nAvio = new Element("avio");
+        nAvio.addAttribute(new Attribute("codi", Integer.toString(pAvio.getCodi())));
     }
 
     private void desarModel(String rutaFitxer) throws GestioVolsExcepcio {
