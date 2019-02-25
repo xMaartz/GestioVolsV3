@@ -14,7 +14,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Date;
-import static principal.GestioVolsExcepcio.comprovarCodiAvio;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  *
@@ -25,8 +28,7 @@ public class Vol implements Component {
     private String codi;
     private Ruta ruta;
     private Avio avio;
-    private Tripulant[] tripulacio;
-    private int posicioTripulacio;
+    private HashMap<String, Tripulant> tripulants;
     private Date dataSortida;
     private Date dataArribada;
     private LocalTime horaSortida;
@@ -45,8 +47,7 @@ public class Vol implements Component {
         this.dataArribada = dataArribada;
         this.horaSortida = horaSortida;
         this.horaArribada = horaArribada;
-        tripulacio = new Tripulant[32];
-        posicioTripulacio = 0;
+        tripulants=new HashMap<>( );
         cap=null;
         calcularDurada();
     }
@@ -76,22 +77,6 @@ public class Vol implements Component {
 
     public void setAvio(Avio avio) {
         this.avio = avio;
-    }
-
-    public Tripulant[] getTripulacio() {
-        return tripulacio;
-    }
-
-    public void setTripulacio(Tripulant[] tripulacio) {
-        this.tripulacio = tripulacio;
-    }
-
-    public int getPosicioTripulacio() {
-        return posicioTripulacio;
-    }
-
-    public void setPosicioTripulacio(int posicioTripulacio) {
-        this.posicioTripulacio = posicioTripulacio;
     }
 
     public Date getDataSortida() {
@@ -142,6 +127,14 @@ public class Vol implements Component {
         this.cap = cap;
     } 
     
+    public HashMap<String, Tripulant> getTripulants() {
+        return tripulants;
+    }
+
+    public void setTripulants(HashMap<String, Tripulant> tripulants) {
+        this.tripulants = tripulants;
+    }
+    
 
     /*
     Paràmetres: cap
@@ -155,7 +148,7 @@ public class Vol implements Component {
     i nanosegons no els tindrem en compte.
     Retorn: El nou vol.
      */
-    public static Vol nouVol() throws ParseException, GestioVolsExcepcio {
+    public static Vol nouVol() throws ParseException {
         String codi;
         Date dataSortida, dataArribada;
         LocalTime horaSortida, horaArribada;
@@ -202,14 +195,11 @@ public class Vol implements Component {
      el valor de durada mitjançant el mètode adient d'aquesta classe.
      Retorn: cap
      */
-    public void modificarComponent() throws ParseException, GestioVolsExcepcio {
+    public void modificarComponent() throws ParseException {
         int hora, minuts;
 
         System.out.println("\nEl codi del vol és: " + codi);
-        if (comprovarCodiAvio( codi = String.valueOf(demanarDades("\nQuin és el nou codi del vol?", 2)))==false){
-            String code = "4";
-            throw new GestioVolsExcepcio(code);
-        }
+        codi = String.valueOf(demanarDades("\nQuin és el nou codi del vol?", 2));
 
         System.out.println("\nLa data de sortida del vol és: " + new SimpleDateFormat("dd-MM-yyyy").format(dataSortida));
         dataSortida = new SimpleDateFormat("dd-MM-yyyy").parse(String.valueOf(demanarDades("\nQuina és la nova data de sortida del vol?: (dd-mm-yyyy)", 2)));
@@ -244,16 +234,18 @@ public class Vol implements Component {
     }
 
     public void afegirTripulant(Tripulant tripulant) {
-        tripulacio[posicioTripulacio] = tripulant;
-        posicioTripulacio++;
+        if(!tripulants.containsKey(tripulant.getPassaport())){ //Si existeix la clau
+            tripulants.put(tripulant.getPassaport(),tripulant);
+        }else{
+            System.out.println("El tripulant introduit ja existeix.");
+        }
         
         if(tripulant instanceof TCP){
             if(cap==null){
                 if(String.valueOf(demanarDades("\nVols que el tripulant afegit sigui cap de cabina?: S-Si o N-No", 2)).equals("S")){
-                   cap.setRang(null);
-                   cap = (TCP) tripulacio[posicioTripulacio - 1];
-                   cap.setRang("cap");
-                    
+                    cap.setRang(null);
+                    cap = (TCP) tripulants.get(tripulant.getPassaport());
+                    cap.setRang("cap");
                 }
             }
         }
@@ -277,25 +269,30 @@ public class Vol implements Component {
         System.out.println("\nHores de sortida: " + horaSortida.getHour() + ":" + horaSortida.getMinute());
         System.out.println("\nHores d'arribada: " + horaArribada.getHour() + ":" + horaArribada.getMinute());
 
+        
+        Set keyTripulants = tripulants.keySet();
+        Iterator<Tripulant> iteratorTripulants = keyTripulants.iterator();
+        
         System.out.println("\nLa tripulació de cabina és:");
-        for (int i = 0; i < posicioTripulacio; i++) {
-            if (tripulacio[i] != null && tripulacio[i] instanceof TripulantCabina) {
-                tripulacio[i].mostrarComponent();
+        while(iteratorTripulants.hasNext()){
+            Tripulant tripulantActual=iteratorTripulants.next();
+            if (tripulantActual != null && tripulantActual instanceof TripulantCabina) {
+                tripulantActual.mostrarComponent();
             }
         }
-
+        
+        keyTripulants = tripulants.keySet();
+        iteratorTripulants = keyTripulants.iterator();
+        
         System.out.println("\nLa tripulació de cabina de passatgers és:");
-        for (int i = 0; i < posicioTripulacio; i++) {
-            if (tripulacio[i] != null && tripulacio[i] instanceof TCP) {
-                tripulacio[i].mostrarComponent();
+        while(iteratorTripulants.hasNext()){
+            Tripulant tripulantActual=iteratorTripulants.next();
+            if (tripulantActual != null && tripulantActual instanceof TCP) {
+                tripulantActual.mostrarComponent();
             }
         }
 
         System.out.println("\nDurada: " + durada);
-    }
-
-    void addAvio(Avio avio) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
