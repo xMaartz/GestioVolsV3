@@ -1,5 +1,8 @@
 package principal;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  *
@@ -49,6 +52,12 @@ public class GestioVolsExcepcio {
     Retorn: verdader si el format és correcta, fals en cas contrari.
      */
     public static boolean comprovarCodiAvio(String codi) {
+        String expresioRegular = "^[0-9]{8}$";
+        
+        Pattern regles = Pattern.compile(expresioRegular);
+        
+        Matcher textAnalitzar = regles.matcher(codi);
+        return textAnalitzar.find() == true;
     }
 
     /*
@@ -61,6 +70,12 @@ public class GestioVolsExcepcio {
     Retorn: verdader si el format és correcta, fals en cas contrari.
      */
     public static boolean comprovarCodiRuta(String codi) {
+        String expresioRegular = "^[a-zA-Z]{2}[0-9]{3}$";
+        
+        Pattern regles = Pattern.compile(expresioRegular);
+        
+        Matcher textAnalitzar = regles.matcher(codi);
+        return textAnalitzar.find() == true;
     }
 
     /*
@@ -73,6 +88,12 @@ public class GestioVolsExcepcio {
     Retorn: verdader si el format és correcta, fals en cas contrari.
      */
     public static boolean comprovarCodiVol(String codi) {
+        String expresioRegular = "^[a-zA-Z]{2,3}[0-9]{4}$";
+        
+        Pattern regles = Pattern.compile(expresioRegular);
+        
+        Matcher textAnalitzar = regles.matcher(codi);
+        return textAnalitzar.find() == true;
     }
     
     /*
@@ -83,6 +104,7 @@ public class GestioVolsExcepcio {
     Retorn: El codi i missatge d'una excepció.
      */
     public String getMessage(){
+        return codiCausa+": "+missatge;
     }
 
 }
