@@ -12,6 +12,7 @@ import components.RutaTransoceanica;
 import components.TCP;
 import components.TripulantCabina;
 import java.text.ParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import persistencia.GestorPersistencia;
 
@@ -28,11 +29,16 @@ public class Aplicacio {
     private static Companyia companyiaActual = null; //Companyia seleccionada
     private static GestorPersistencia gp = new GestorPersistencia();
 
-    public static void main(String[] args) throws ParseException {
-        menuPrincipal();
+    public static void main(String[] args) throws ParseException, GestioVolsExcepcio {
+        try {
+            menuPrincipal();
+        } catch (GestioVolsExcepcio e){
+            System.out.println(e.getMessage());
+        }
+        
     }
 
-    private static void menuPrincipal() throws ParseException {
+    private static void menuPrincipal() throws ParseException, GestioVolsExcepcio {
         int opcio = 0;
 
         do {
@@ -47,9 +53,14 @@ public class Aplicacio {
             System.out.println("\n7. Gestió de tripulants de cabina");
             System.out.println("\n8. Gestió de tripulants de cabina de passatgers");
             System.out.println("\n9. Gestió de vols");
-
-            opcio = DADES.nextInt();
-
+            
+            try {
+                opcio = DADES.nextInt();
+            } catch (InputMismatchException e){
+                String code = "1";
+                throw new GestioVolsExcepcio(code);
+            }
+            
             switch (opcio) {
                 case 0:
                     break;
@@ -119,7 +130,7 @@ public class Aplicacio {
         } while (opcio != 0);
     }
 
-    public static void menuCompanyes() {
+    public static void menuCompanyes() throws GestioVolsExcepcio, InputMismatchException{
         int opcio = 0;
 
         do {
@@ -184,7 +195,7 @@ public class Aplicacio {
         } while (opcio != 0);
     }
 
-    public static void menuComponents(int tipus) throws ParseException {
+    public static void menuComponents(int tipus) throws ParseException, GestioVolsExcepcio, InputMismatchException {
         int opcio = 0;
 
         do {
@@ -257,30 +268,30 @@ public class Aplicacio {
                     }
 
                     if (pos >= 0) {
-                        companyiaActual.getComponents()[pos].modificarComponent();
+                        companyiaActual.getComponents().get(pos).modificarComponent();
                     } else {
                         System.out.println("\nNo existeix");
                     }
                     break;
                 case 3:
-                    for (int i = 0; i < companyiaActual.getPosicioComponents(); i++) {
-                        if (companyiaActual.getComponents()[i] != null) {
-                            if (tipus == 1 && companyiaActual.getComponents()[i] instanceof Avio) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 2 && companyiaActual.getComponents()[i] instanceof RutaNacional) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 3 && companyiaActual.getComponents()[i] instanceof RutaInternacional) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 4 && companyiaActual.getComponents()[i] instanceof RutaIntercontinental) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 5 && companyiaActual.getComponents()[i] instanceof RutaTransoceanica) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 6 && companyiaActual.getComponents()[i] instanceof TripulantCabina) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 7 && companyiaActual.getComponents()[i] instanceof TCP) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
-                            } else if (tipus == 8 && companyiaActual.getComponents()[i] instanceof Vol) {
-                                companyiaActual.getComponents()[i].mostrarComponent();
+                    for (int i = 0; i < companyiaActual.getComponents().size(); i++) {
+                        if (companyiaActual.getComponents().get(i) != null) {
+                            if (tipus == 1 && companyiaActual.getComponents().get(i) instanceof Avio) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 2 && companyiaActual.getComponents().get(i) instanceof RutaNacional) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 3 && companyiaActual.getComponents().get(i) instanceof RutaInternacional) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 4 && companyiaActual.getComponents().get(i) instanceof RutaIntercontinental) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 5 && companyiaActual.getComponents().get(i) instanceof RutaTransoceanica) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 6 && companyiaActual.getComponents().get(i) instanceof TripulantCabina) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 7 && companyiaActual.getComponents().get(i) instanceof TCP) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
+                            } else if (tipus == 8 && companyiaActual.getComponents().get(i) instanceof Vol) {
+                                companyiaActual.getComponents().get(i).mostrarComponent();
                             }
                         }
                     }

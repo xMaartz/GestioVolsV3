@@ -1,6 +1,8 @@
 package components;
 
 import principal.Component;
+import principal.GestioVolsExcepcio;
+import static principal.GestioVolsExcepcio.comprovarCodiRuta;
 
 /**
  *
@@ -68,10 +70,14 @@ public abstract class Ruta implements Component {
     
      Retorn: cap
      */
-    public void modificarComponent() {
+    public void modificarComponent() throws GestioVolsExcepcio {
 
         System.out.println("\nEl codi de la ruta és:" + codi);
-        codi = String.valueOf(demanarDades("\nQuin és el nou codi de la ruta?",2));
+        
+        if (comprovarCodiRuta(codi = String.valueOf(demanarDades("\nQuin és el nou codi de la ruta?",2)))){
+            String code = "3";
+            throw new GestioVolsExcepcio(code);
+        }
         demanarDades("",4); //Netejar buffer
         System.out.println("\nL'aeroport d'origen de la ruta és:" + aeroportOri);
         aeroportOri = String.valueOf(demanarDades("\nQuin és el nou l'aeroport d'origen de la ruta?",4));
